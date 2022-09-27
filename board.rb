@@ -1,9 +1,12 @@
 require "byebug"
+require_relative './card.rb'
+
 class Board
     attr_reader :size, :grid, :deck
-    def initialize(size)
-        @size = size
-        @grid = Array.new(size) {Array.new(size, "_")}
+    def initialize
+        @size = 4
+        @grid = Array.new(@size) {Array.new(@size, "_")}
+        # debugger
         @deck = []
     end
 
@@ -17,15 +20,29 @@ class Board
         @grid[row][col] = value
     end
 
-    def populate(face_value)
+    def create_deck
 
-        while @grid.flatten.count(face_value) < 2
-            pos = [rand(0...@grid.length), rand(0...@grid.length)]
-            self[pos] = face_value if self[pos] == "_"
+        num_card_pairs = @size * @size / 2
+        values = (:A..:Z).to_a.shuffle
+
+        until @deck.length == num_card_pairs
+            @deck << Card.new(values.pop)
         end
         
-        return true if @grid.flatten.count(face_value) == 2
-        false
+        # @deck
+    end
+
+
+    def populate
+
+        deck.each do |card|
+
+            while @grid.flatten.count(card.face_value) < 2
+                pos = [rand(0...@grid.length), rand(0...@grid.length)]
+                self[pos] = card.face_value if self[pos] == "_"
+            end
+            
+        end
     end
 
     def print
@@ -33,12 +50,14 @@ class Board
             puts row.join(" ")
         end
     end
-        # (:A..:Z).to_a.sample
+
 end
 
-board = Board.new(3)
+board = Board.new
+# p board.populate(:X)
 p board.print
-p board.populate(:X)
+p board.create_deck
+p board.populate
 p board.print
-p board.size
+# p board.size
 p board.deck
