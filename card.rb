@@ -17,10 +17,3 @@ class Card
 
 end
 
-
-
-l = Card.new(:L)
-p l
-p l.revealed
-p l.hide
-p l.reveal
