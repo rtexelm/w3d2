@@ -21,32 +21,44 @@ class Board
     end
 
     def create_deck
-
         num_card_pairs = @size * @size / 2
         values = (:A..:Z).to_a.shuffle
 
         until @deck.length == num_card_pairs
-            @deck << Card.new(values.pop)
+            face_value = values.pop
+            2.times do 
+                @deck << Card.new(face_value)
+            end
         end
         
         # @deck
     end
 
-
     def populate
-
         deck.each do |card|
 
-            while @grid.flatten.count(card.face_value) < 2
+            while @grid.flatten.count(card) < 2
                 pos = [rand(0...@grid.length), rand(0...@grid.length)]
-                self[pos] = card.face_value if self[pos] == "_"
+                self[pos] = card if self[pos] == "_"
             end
             
         end
     end
 
-    def print
-        @grid.each do |row| 
+    def hidden_board
+        @grid.map do |row|
+            row.map do |instance|
+                if instance.revealed
+                    instance.face_value
+                else
+                    "_"
+                end
+            end
+        end
+    end
+
+    def print(board)
+        board.each do |row| 
             puts row.join(" ")
         end
     end
@@ -55,9 +67,10 @@ end
 
 board = Board.new
 # p board.populate(:X)
-p board.print
+p board.print(board.grid)
 p board.create_deck
 p board.populate
-p board.print
+p board.print(board.grid)
+p board[[0, 0]].reveal
+p board.print(board.hidden_board)
 # p board.size
-p board.deck
